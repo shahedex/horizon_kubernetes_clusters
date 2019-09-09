@@ -1,0 +1,36 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: horizon-backend
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: horizon-backend-deployment
+        version: v1
+    spec:
+      containers:
+        - name: worklog
+          image: shahedmehbub/horizon_backend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: HOST_IP
+              value: kworker2.example.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: horizon-backend-service
+spec:
+  ports:
+    - port: 5000
+      targetPort: 5000
+      nodePort: 32000
+      name: http
+  type: NodePort
+  selector:
+    name: horizon-backend-deployment

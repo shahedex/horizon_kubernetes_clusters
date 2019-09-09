@@ -1,0 +1,36 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: horizon-frontend
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: horizon-frontend-deployment
+        version: v1
+    spec:
+      containers:
+        - name: worklogui
+          image: shahedmehbub/horizon_frontend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REACT_APP_APP_SERVER
+              value: kworker2.example.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: horizon-frontend-service
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 32001
+      name: http
+  type: NodePort
+  selector:
+    name: horizon-frontend-deployment
